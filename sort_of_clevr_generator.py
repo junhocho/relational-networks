@@ -2,7 +2,9 @@ import cv2
 import os
 import numpy as np
 import random
-import cPickle as pickle
+#import cPickle as pickle
+import pickle
+
 
 train_size = 9800
 test_size = 200
@@ -16,13 +18,13 @@ nb_questions = 10
 dirs = './data'
 
 colors = [
-    (0,0,255),##r
-    (0,255,0),##g
-    (255,0,0),##b
-    (0,156,255),##o
-    (128,128,128),##k
-    (0,255,255)##y
-    ]
+        (0,0,255),##r
+        (0,255,0),##g
+        (255,0,0),##b
+        (0,156,255),##o
+        (128,128,128),##k
+        (0,255,255)##y
+        ]
 
 
 try:
@@ -33,7 +35,7 @@ except:
 def center_generate(objects):
     while True:
         pas = True
-        center = np.random.randint(0+size, img_size - size, 2)        
+        center = np.random.randint(0+size, img_size - size, 2)
         if len(objects) > 0:
             for name,c,shape in objects:
                 if ((center - c) ** 2).sum() < ((size * 2) ** 2):
@@ -46,7 +48,7 @@ def center_generate(objects):
 def build_dataset():
     objects = []
     img = np.ones((img_size,img_size,3)) * 255
-    for color_id,color in enumerate(colors):  
+    for color_id,color in enumerate(colors):
         center = center_generate(objects)
         if random.random()<0.5:
             start = (center[0]-size, center[1]-size)
@@ -94,7 +96,7 @@ def build_dataset():
             else:
                 answer = 1
         norel_answers.append(answer)
-    
+
     """Relational questions"""
     for i in range(nb_questions):
         question = np.zeros((11))
@@ -115,7 +117,7 @@ def build_dataset():
                 answer = 2
             else:
                 answer = 3
-                
+
         elif subtype == 1:
             """furthest-from->rectangle/circle"""
             my_obj = objects[color][1]
@@ -132,14 +134,14 @@ def build_dataset():
             count = -1
             for obj in objects:
                 if obj[2] == my_obj:
-                    count +=1 
+                    count +=1
             answer = count+4
 
         rel_answers.append(answer)
 
     relations = (rel_questions, rel_answers)
     norelations = (norel_questions, norel_answers)
-    
+
     img = img/255.
     dataset = (img, relations, norelations)
     return dataset
@@ -157,7 +159,7 @@ train_datasets = [build_dataset() for _ in range(train_size)]
 
 print('saving datasets...')
 filename = os.path.join(dirs,'sort-of-clevr.pickle')
-f = open(filename, 'w')
+f = open(filename, 'wb')
 pickle.dump((train_datasets,test_datasets), f)
 f.close()
 print('datasets saved at {}'.format(filename))

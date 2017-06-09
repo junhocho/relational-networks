@@ -4,7 +4,6 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
 
-
 class RN(nn.Module):
 
     def __init__(self,args):
@@ -17,7 +16,7 @@ class RN(nn.Module):
         self.batchNorm3 = nn.BatchNorm2d(128)
         self.conv4 = nn.Conv2d(128, 256, 3, stride=2, padding=1)
         self.batchNorm4 = nn.BatchNorm2d(256)
-        
+
         self.g_fc1 = nn.Linear(512+11, 2000)
         self.g_fc2 = nn.Linear(2000, 2000)
         self.g_fc3 = nn.Linear(2000, 2000)
@@ -49,9 +48,9 @@ class RN(nn.Module):
         """g"""
         x_g = 0
         for i in range(25):
-            oi = x[:,:,i/5,i%5]
+            oi = x[:,:,int(i/5),i%5]
             for j in range(25):
-                oj = x[:,:,j/5,j%5]
+                oj = x[:,:,int(j/5),j%5]
                 x_ = torch.cat((oi,oj,qst), 1)
                 x_ = self.g_fc1(x_)
                 x_ = F.relu(x_)
@@ -62,7 +61,7 @@ class RN(nn.Module):
                 x_ = self.g_fc4(x_)
                 x_ = F.relu(x_)
                 x_g += x_
-        
+
         """f"""
         x_f = self.f_fc1(x_g)
         x_f = F.relu(x_f)
@@ -85,7 +84,7 @@ class RN(nn.Module):
         correct = pred.eq(label.data).cpu().sum()
         accuracy = correct * 100. / len(label)
         return accuracy
-        
+
 
     def test_(self, input_img, input_qst, label):
         output = self(input_img, input_qst)

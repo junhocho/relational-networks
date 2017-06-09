@@ -5,7 +5,8 @@ Code is based on pytorch/examples/mnist (https://github.com/pytorch/examples/tre
 from __future__ import print_function
 import argparse
 import os
-import cPickle as pickle
+#import cPickle as pickle
+import pickle
 import random
 import numpy as np
 
@@ -69,14 +70,14 @@ def cvt_data(data, i):
     input_qst.data.resize_(qst.size()).copy_(qst)
     label.data.resize_(ans.size()).copy_(ans)
 
-    
+
 def train(epoch, rel, norel):
     model.train()
     if not len(rel[0]) == len(norel[0]):
         print('Not equal length for relation dataset and non-relation dataset.')
         return
-    
-    for batch_idx in range(len(rel[0]) / bs):
+
+    for batch_idx in range( int(len(rel[0]) / bs)):
         cvt_data(rel, batch_idx)
         accuracy_rel = model.train_(input_img, input_qst, label)
 
@@ -86,17 +87,17 @@ def train(epoch, rel, norel):
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)] Relations accuracy: {:.0f}% | Non-relations accuracy: {:.0f}%'.format(epoch, batch_idx * bs * 2, len(rel[0]) * 2, \
                                                                                                                            100. * batch_idx * bs/ len(rel[0]), accuracy_rel, accuracy_norel))
-            
+
 
 def test(epoch, rel, norel):
     model.eval()
     if not len(rel[0]) == len(norel[0]):
         print('Not equal length for relation dataset and non-relation dataset.')
         return
-    
+
     accuracy_rels = []
     accuracy_norels = []
-    for batch_idx in range(len(rel[0]) / bs):
+    for batch_idx in range(int(len(rel[0]) / bs)):
         cvt_data(rel, batch_idx)
         accuracy_rels.append(model.test_(input_img, input_qst, label))
 
@@ -108,12 +109,12 @@ def test(epoch, rel, norel):
     print('\n Test set: Relation accuracy: {:.0f}% | Non-relation accuracy: {:.0f}%\n'.format(
         accuracy_rel, accuracy_norel))
 
-    
+
 def load_data():
     print('loading data...')
     dirs = './data'
     filename = os.path.join(dirs,'sort-of-clevr.pickle')
-    f = open(filename, 'r')
+    f = open(filename, 'rb')
     train_datasets, test_datasets = pickle.load(f)
     rel_train = []
     rel_test = []
@@ -124,7 +125,7 @@ def load_data():
         for qst,ans in zip(relations[0], relations[1]):
             rel_train.append((img,qst,ans))
         for qst,ans in zip(norelations[0], norelations[1]):
-            norel_train.append((img,qst,ans))
+            norel_train.append((img, qst, ans))
 
     for img, relations, norelations in test_datasets:
         img = np.swapaxes(img,0,2)
@@ -132,7 +133,7 @@ def load_data():
             rel_test.append((img,qst,ans))
         for qst,ans in zip(norelations[0], norelations[1]):
             norel_test.append((img,qst,ans))
-    
+
     print('converting data...')
     datasets = [rel_train, rel_test, norel_train, norel_test]
     s_datasets = [random.shuffle(dataset) for dataset in datasets]
