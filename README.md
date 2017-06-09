@@ -4,7 +4,7 @@ Implemented & tested on Sort-of-CLEVR task.
 
 ## Sort-of-CLEVR
 
-Sort-of-CLEVR is simplified version of [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/), of which is composed of 10000 images and 20 questions (10 relational questions and 10 non-relational questions) per each image. 6 colors (red, green, blue, orange, gray, yellow) are assigned to randomly chosen shape (square or circle), and placed in a image.
+Sort-of-CLEVR is simplified version of [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/).This is composed of 10000 images and 20 questions (10 relational questions and 10 non-relational questions) per each image. 6 colors (red, green, blue, orange, gray, yellow) are assigned to randomly chosen shape (square or circle), and placed in a image.
 
 Non-relational questions are composed of 3 subtypes:
 
@@ -51,7 +51,7 @@ And relational questions:
 
 or
 
-  	$ python sort_of_clevr_generator.py
+  	$ python sort_of_clevr_generator.pythe archi
 
 to generate sort-of-clevr dataset
 and
@@ -62,8 +62,11 @@ to train.
 
 ## Result
 
-Accuracy for relational questions: 70% <-> 63% of CNN + MLP written in the paper
+| | Relational Networks (3rd epoch) | CNN + MLP (without RN, 10th epoch) |
+| --- | --- | --- |
+| Non-relational question | 57% | 58% |
+| Relational question | 70% | 43% |
 
-Accuracy for non-relational questions: 57%
+Relational networks shows far better results in relational questions, as the original paper argues.
 
-On test dataset after 3rd Epoch (Now I keep training...)
+Still this model shows low accuracy overall - I guess it could be the problem of either the architecture of the model, or difference between my dataset and the author's dataset. Please wait for further improvement! (and your pull requests are always welcome!)
